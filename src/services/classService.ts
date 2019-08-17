@@ -2,7 +2,7 @@ import useBasicStats from "../character/useBasicStats";
 import { SavingThrow } from "../rules/savingThrows";
 import { classDefinitions, Class } from "../rules/classes";
 import { SavingThrows } from "../character/useSavingThrows";
-import { Skills } from "../character/useSkills";
+import { SkillLevels } from "../character/useSkills";
 import useAbilityScores from "../character/useAbilityScores";
 
 const getLevelModifiers = (className: Class, level: number) => {
@@ -88,7 +88,7 @@ const useClassSkills = () => {
     (rv, [currClass]) => {
       return [...new Set([...rv, ...classDefinitions[currClass].classSkills])];
     },
-    [] as (keyof Skills)[]
+    [] as (keyof SkillLevels)[]
   );
 };
 

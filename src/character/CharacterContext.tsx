@@ -1,7 +1,7 @@
 import * as React from "react";
 import { AbilityScores } from "./useAbilityScores";
 import { Race } from "../rules/races";
-import { Skills, SkillLevels } from "./useSkills";
+import { SkillLevels } from "./useSkills";
 import { Theme } from "../rules/themes";
 import { Class } from "../rules/classes";
 import Alignment from "../rules/alignments";
@@ -16,7 +16,7 @@ import { FeatName } from "../rules/feats";
 import { Armor } from "../rules/armor";
 
 export interface SkillsLevels {
-  levels: Skills[];
+  levels: SkillLevels[];
   misc: SkillLevels;
 }
 

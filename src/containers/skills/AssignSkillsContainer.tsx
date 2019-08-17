@@ -12,17 +12,24 @@ const AssignSkillsContainer: React.FC<AssignSkillsContainerProps> = ({
   const {
     skillLevels,
     classSkills,
-    checkSkill,
-    uncheckSkill,
+    incrementSkill,
+    decrementSkill,
+    canDecrement,
+    canIncrement,
     skills
   } = useSkills();
   return (
     <AssignSkills
       skillLevels={skillLevels}
       skills={skills[level - 1] || {}}
-      onSkillChange={(key, value) => {
-        value ? checkSkill(key, level) : uncheckSkill(key, level);
+      onIncrement={key => {
+        incrementSkill(key, level);
       }}
+      onDecrement={key => {
+        decrementSkill(key, level);
+      }}
+      canDecrement={key => canDecrement(key, level)}
+      canIncrement={key => canIncrement(key, level)}
       classSkills={classSkills}
     />
   );

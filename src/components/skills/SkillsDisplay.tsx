@@ -1,11 +1,7 @@
 import * as React from "react";
 import injectSheet from "react-jss";
 import classnames from "classnames";
-import {
-  Skills,
-  skillDefinitions,
-  SkillLevels
-} from "../../character/useSkills";
+import { skillDefinitions, SkillLevels } from "../../character/useSkills";
 import Container from "../layout/Container";
 import {
   Table,
@@ -44,10 +40,10 @@ const styles = {
 
 interface SkillsDisplayProps {
   skillLevels: SkillLevels;
-  classSkills: (keyof Skills)[];
-  trainedSkills: (keyof Skills)[];
+  classSkills: (keyof SkillLevels)[];
+  trainedSkills: (keyof SkillLevels)[];
   miscSkills: SkillLevels;
-  updateMiscSkill(key: keyof Skills, value: number);
+  updateMiscSkill(key: keyof SkillLevels, value: number);
   classes: any;
 }
 
@@ -75,7 +71,7 @@ const SkillsDisplay: React.FC<SkillsDisplayProps> = ({
           {Object.keys(skillDefinitions).map(k => {
             const unusable =
               skillDefinitions[k].trainedOnly &&
-              !trainedSkills.includes(k as keyof Skills);
+              !trainedSkills.includes(k as keyof SkillLevels);
             return (
               <TableRow
                 key={k}
@@ -84,7 +80,7 @@ const SkillsDisplay: React.FC<SkillsDisplayProps> = ({
                 })}
               >
                 <TableCell className={classes.classSkill} padding="dense">
-                  {classSkills.includes(k as keyof Skills) ? "*" : ""}
+                  {classSkills.includes(k as keyof SkillLevels) ? "*" : ""}
                 </TableCell>
                 <TableCell className={classes.skillName} padding="dense">
                   {k}
@@ -98,7 +94,10 @@ const SkillsDisplay: React.FC<SkillsDisplayProps> = ({
                     type="number"
                     value={miscSkills[k] || 0}
                     onChange={e =>
-                      updateMiscSkill(k as keyof Skills, Number(e.target.value))
+                      updateMiscSkill(
+                        k as keyof SkillLevels,
+                        Number(e.target.value)
+                      )
                     }
                     InputLabelProps={{
                       shrink: true

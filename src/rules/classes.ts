@@ -1,5 +1,5 @@
 import { AbilityScores } from "../character/useAbilityScores";
-import { Skills } from "../character/useSkills";
+import { SkillLevels } from "../character/useSkills";
 import { SavingThrowModifiers, SavingThrow } from "./savingThrows";
 
 export enum Class {
@@ -24,7 +24,7 @@ export interface ClassDefinition {
   stamina: number;
   keyAbility: keyof AbilityScores;
   skillRanksPerLevel: number;
-  classSkills: (keyof Skills)[];
+  classSkills: (keyof SkillLevels)[];
   levelModifiers: levelModifiers[];
 }
 

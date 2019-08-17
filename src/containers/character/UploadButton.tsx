@@ -10,7 +10,7 @@ const UploadButton: React.FC = () => {
       Upload
       <input
         type="file"
-        accept={`.${FILE_EXTENSION}|.json`}
+        accept={`.${FILE_EXTENSION}`}
         onChange={async ev => {
           const file = ev.target.files && ev.target.files[0];
           if (
@@ -18,11 +18,7 @@ const UploadButton: React.FC = () => {
             (file.name
               .split(".")
               .pop()!
-              .toLowerCase() !== FILE_EXTENSION &&
-              file.name
-                .split(".")
-                .pop()!
-                .toLowerCase() !== ".json")
+              .toLowerCase() !== FILE_EXTENSION)
           ) {
             alert("file not correct format");
             return;

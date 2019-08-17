@@ -1,5 +1,5 @@
 import { AbilityScoreModifiers } from "../character/useAbilityScores";
-import { Skills } from "../character/useSkills";
+import { SkillLevels } from "../character/useSkills";
 
 export enum Theme {
   ACE_PILOT = "Ace Pilot",
@@ -18,7 +18,7 @@ export enum Theme {
 interface ThemeDetails {
   name: Theme;
   abilityModifiers: AbilityScoreModifiers;
-  classSkills: (keyof Skills)[];
+  classSkills: (keyof SkillLevels)[];
   hasUnspecifiedModifiers?: boolean;
 }
 

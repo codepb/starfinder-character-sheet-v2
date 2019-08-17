@@ -4,30 +4,6 @@ import { forEachKey } from "../helpers/objectHelpers";
 import useAbilityScores, { AbilityScores } from "./useAbilityScores";
 import { useClassSkills } from "../services/classService";
 
-export interface Skills {
-  acrobatics?: boolean;
-  athletics?: boolean;
-  bluff?: boolean;
-  computers?: boolean;
-  culture?: boolean;
-  diplomacy?: boolean;
-  disguise?: boolean;
-  engineering?: boolean;
-  intimidate?: boolean;
-  lifeScience?: boolean;
-  medicine?: boolean;
-  mysticism?: boolean;
-  perception?: boolean;
-  physicalScience?: boolean;
-  piloting?: boolean;
-  profession1?: boolean;
-  profession2?: boolean;
-  senseMotive?: boolean;
-  sleightOfHand?: boolean;
-  stealth?: boolean;
-  survival?: boolean;
-}
-
 export interface SkillLevels {
   acrobatics?: number;
   athletics?: number;
@@ -110,21 +86,20 @@ const skillDefinitions: SkillDefinitions = {
   survival: { ability: "wisdom" }
 };
 
-const getSkillLevel = (skills: Skills[], skill: keyof Skills) => {
+const getSkillLevel = (skills: SkillLevels[], skill: keyof SkillLevels) => {
   return skills
     .map(s => (s || {})[skill])
-    .reduce((rv, curr) => rv + (curr ? 1 : 0), 0);
+    .reduce((rv: number, curr) => rv + (curr || 0), 0);
 };
 
 const calculateSkillLevel = (
   skills: SkillsLevels,
-  classSkills: (keyof Skills)[],
+  classSkills: (keyof SkillLevels)[],
   abilityModifiers: AbilityScores
-) => (skill: keyof Skills) => {
+) => (skill: keyof SkillLevels) => {
   const classSkillModifier = classSkills.includes(skill) ? 3 : 0;
   const abilityModifier =
     abilityModifiers[skillDefinitions[skill].ability] || 0;
-  console.log(skills);
   const totalSkillLevel = getSkillLevel(skills.levels, skill);
   const misc = skills.misc[skill] || 0;
   return totalSkillLevel > 0
@@ -132,26 +107,9 @@ const calculateSkillLevel = (
     : abilityModifier + misc;
 };
 
-const useSkills = (): {
-  skillLevels: SkillLevels;
-  skills: Skills[];
-  baseSkills: Skills;
-  classSkills: (keyof Skills)[];
-  trainedSkills: (keyof Skills)[];
-  miscSkills: SkillLevels;
-  updateMiscSkill(key: keyof Skills, value: number): void;
-  checkSkill(key: keyof Skills, level?: number): void;
-  uncheckSkill(key: keyof Skills, level?: number): void;
-} => {
+const useSkills = () => {
   const [{ skills }, { setSkills }] = React.useContext(CharacterContext);
   const classSkills = useClassSkills();
-  const updateSkill = (key: keyof Skills, newValue: boolean, level: number) => {
-    setSkills(skills => {
-      const newSkills = [...skills.levels];
-      newSkills[level - 1] = { ...newSkills[level - 1], [key]: newValue };
-      return { levels: newSkills, misc: skills.misc };
-    });
-  };
   const { abilityModifiers } = useAbilityScores();
   const calculateSkill = calculateSkillLevel(
     skills,
@@ -159,6 +117,10 @@ const useSkills = (): {
     abilityModifiers
   );
   const skillLevels = <SkillLevels>forEachKey(calculateSkill, skillDefinitions);
+  const canIncrement = (k: keyof SkillLevels, level?: number) =>
+    (skillLevels[k] || 0) < (level || 1);
+  const canDecrement = (k: keyof SkillLevels, level?: number) =>
+    ((skills.levels[(level || 1) - 1] || {})[k] || 0) > 0;
   return {
     skillLevels,
     skills: skills.levels,
@@ -167,20 +129,50 @@ const useSkills = (): {
     trainedSkills: skills.levels.reduce(
       (rv, curr) => [
         ...rv,
-        ...(Object.keys(curr || {}).filter(k => curr[k]) as (keyof Skills)[])
+        ...(Object.keys(curr || {}).filter(
+          k => curr[k]
+        ) as (keyof SkillLevels)[])
       ],
-      [] as (keyof Skills)[]
+      [] as (keyof SkillLevels)[]
     ),
     miscSkills: skills.misc,
-    updateMiscSkill: (key: keyof Skills, value: number) =>
+    updateMiscSkill: (key: keyof SkillLevels, value: number) =>
       setSkills(skills => {
         const newMiscSkills = { ...skills.misc, [key]: value };
         return { levels: skills.levels, misc: newMiscSkills };
       }),
-    checkSkill: (key: keyof Skills, level?: number) =>
-      updateSkill(key, true, level || 1),
-    uncheckSkill: (key: keyof Skills, level?: number) =>
-      updateSkill(key, false, level || 1)
+    incrementSkill: (key: keyof SkillLevels, level?: number) => {
+      if (!canIncrement(key, level)) {
+        return;
+      }
+      setSkills(skills => {
+        const index = (level || 1) - 1;
+        const newSkillLevel = skills.levels[index] || {};
+        const mapped = {
+          ...newSkillLevel,
+          [key]: (newSkillLevel[key] || 0) + 1
+        };
+        const newSkills = { ...skills.levels, [index]: mapped };
+        return { levels: newSkills, misc: skills.misc };
+      });
+    },
+    decrementSkill: (key: keyof SkillLevels, level?: number) => {
+      if (!canDecrement(key, level)) {
+        return;
+      }
+      setSkills(skills => {
+        const index = (level || 1) - 1;
+        const newSkillLevel = skills.levels[index] || {};
+        const mapped = {
+          ...newSkillLevel,
+          [key]: (newSkillLevel[key] || 0) - 1
+        };
+        const newSkills = { ...skills.levels, [index]: mapped };
+        return { levels: newSkills, misc: skills.misc };
+      });
+    },
+    canIncrement,
+    canDecrement
   };
 };
 
