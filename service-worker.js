@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/starfinder-character-sheet-v2/precache-manifest.02f8a17ed676251addc4cabdb701903f.js"
+  "/starfinder-character-sheet-v2/precache-manifest.15ab253b9543985343bc5940f07f61b2.js"
 );
 
 workbox.clientsClaim();
