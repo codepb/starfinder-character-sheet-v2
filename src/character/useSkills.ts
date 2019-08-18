@@ -118,7 +118,7 @@ const useSkills = () => {
   );
   const skillLevels = <SkillLevels>forEachKey(calculateSkill, skillDefinitions);
   const canIncrement = (k: keyof SkillLevels, level?: number) =>
-    (skillLevels[k] || 0) < (level || 1);
+    (skills.levels[k] || 0) < (level || 1);
   const canDecrement = (k: keyof SkillLevels, level?: number) =>
     ((skills.levels[(level || 1) - 1] || {})[k] || 0) > 0;
   return {
