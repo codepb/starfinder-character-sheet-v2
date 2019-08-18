@@ -24,11 +24,13 @@ import WeaponsContainer from "../attack/WeaponsContainer";
 import EquipmentContainer from "../equipment/EquipmentContainer";
 import SpellsContainer from "../spells/SpellsContainer";
 import ActionsContainer from "./ActionsContainer";
+import FeatSelection from "../feats/FeatSelection";
 
 enum Page {
   Sheet,
   AddLevel,
   AddAbilities,
+  AddFeats,
   AddSkills
 }
 
@@ -83,9 +85,9 @@ const CharacterDisplayContainer: React.FC = () => {
   const { addClassLevel } = useBasicStats();
 
   const currentLevel = levels.reduce((rv, curr) => curr[1] + rv, 0);
+  const levelIsOdd = (currentLevel + 1) % 2 === 1;
   if (page === Page.AddLevel) {
     const levelIsMultipleOfFive = (currentLevel + 1) % 5 === 0;
-    console.log(currentLevel);
     return (
       <AddLevel
         classes={Object.values(Class)}
@@ -95,7 +97,13 @@ const CharacterDisplayContainer: React.FC = () => {
         }
         onConfirm={() => {
           addClassLevel(levelClass);
-          setPage(levelIsMultipleOfFive ? Page.AddAbilities : Page.AddSkills);
+          setPage(
+            levelIsMultipleOfFive
+              ? Page.AddAbilities
+              : levelIsOdd
+              ? Page.AddFeats
+              : Page.AddSkills
+          );
         }}
         onGoBack={() => setPage(Page.Sheet)}
       />
@@ -106,6 +114,21 @@ const CharacterDisplayContainer: React.FC = () => {
     return (
       <>
         <LevelUpAbilityScoresContainer level={currentLevel} />
+        <Button
+          onClick={() =>
+            levelIsOdd ? setPage(Page.AddFeats) : setPage(Page.AddSkills)
+          }
+        >
+          Next
+        </Button>
+      </>
+    );
+  }
+
+  if (page === Page.AddFeats) {
+    return (
+      <>
+        <FeatSelection />
         <Button onClick={() => setPage(Page.AddSkills)}>Next</Button>
       </>
     );
