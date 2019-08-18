@@ -12,6 +12,7 @@ const AssignSkillsContainer: React.FC<AssignSkillsContainerProps> = ({
   const {
     skillLevels,
     classSkills,
+    pointsAtLevel,
     incrementSkill,
     decrementSkill,
     canDecrement,
@@ -22,6 +23,7 @@ const AssignSkillsContainer: React.FC<AssignSkillsContainerProps> = ({
     <AssignSkills
       skillLevels={skillLevels}
       skills={skills[level - 1] || {}}
+      pointsSpent={pointsAtLevel(level)}
       onIncrement={key => {
         incrementSkill(key, level);
       }}

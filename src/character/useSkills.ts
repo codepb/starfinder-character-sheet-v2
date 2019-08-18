@@ -141,6 +141,11 @@ const useSkills = () => {
         const newMiscSkills = { ...skills.misc, [key]: value };
         return { levels: skills.levels, misc: newMiscSkills };
       }),
+    pointsAtLevel: (level: number) =>
+      Object.keys(skills.levels[level - 1] || {}).reduce(
+        (rv, curr) => rv + skills.levels[level - 1][curr],
+        0
+      ),
     incrementSkill: (key: keyof SkillLevels, level?: number) => {
       if (!canIncrement(key, level)) {
         return;
@@ -152,7 +157,9 @@ const useSkills = () => {
           ...newSkillLevel,
           [key]: (newSkillLevel[key] || 0) + 1
         };
-        const newSkills = { ...skills.levels, [index]: mapped };
+        const newSkills = Array.from({ length: level || 1 }, (_, k) =>
+          k === index ? mapped : skills.levels[k] || {}
+        );
         return { levels: newSkills, misc: skills.misc };
       });
     },
@@ -167,7 +174,9 @@ const useSkills = () => {
           ...newSkillLevel,
           [key]: (newSkillLevel[key] || 0) - 1
         };
-        const newSkills = { ...skills.levels, [index]: mapped };
+        const newSkills = Array.from({ length: level || 1 }, (_, k) =>
+          k === index ? mapped : skills.levels[k] || {}
+        );
         return { levels: newSkills, misc: skills.misc };
       });
     },
